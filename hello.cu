@@ -4,7 +4,7 @@
 #include <curand_kernel.h>
 #include <time.h>
 
-#define N 102400
+#define N 1024000
 #define num_threads 1024
 
 int random_five(int thread, int seed);
@@ -25,7 +25,7 @@ int main(void)
     A = (int*) malloc(bytes);
     cudaMalloc(&Ad, bytes);
 
-    random_kernel<<<100,num_threads>>>(Ad);
+    random_kernel<<<1000,num_threads>>>(Ad);
     cudaMemcpy(A, Ad, bytes, cudaMemcpyDeviceToHost);
     
     cudaDeviceSynchronize();
@@ -65,7 +65,7 @@ __device__ int random_seven(int thread)
     int count = 0;
     while (flag == 0)
     {
-        int num = 5 * random_five(thread, count * 1000) + random_five(thread, count * 2 * 1000);
+        int num = 5 * random_five(thread, count * 1000) + random_five(thread, count * 1000 - 1);
         if(num < 21)
         {
             result = num % 7 + 1;
